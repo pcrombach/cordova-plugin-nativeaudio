@@ -27,24 +27,26 @@ NSString* INFO_VOLUME_CHANGED = @"(NATIVE AUDIO) Volume changed.";
 
 - (void)pluginInitialize
 {
+    // Fix source
+    // http://stackoverflow.com/questions/10180500/how-to-use-kaudiosessionproperty-overridecategorymixwithothers
+    
     self.fadeMusic = NO;
-
-    AudioSessionInitialize(NULL, NULL, nil , nil);
+    
     AVAudioSession *session = [AVAudioSession sharedInstance];
-
+    
+    [session setActive: NO error: nil];
     NSError *setCategoryError = nil;
-
+    
     // Allows the application to mix its audio with audio from other apps.
     if (![session setCategory:AVAudioSessionCategoryAmbient
                   withOptions:AVAudioSessionCategoryOptionMixWithOthers
                         error:&setCategoryError]) {
-
+        
         NSLog (@"Error setting audio session category.");
         return;
     }
-
+    
     [session setActive: YES error: nil];
-    [session setCategory:AVAudioSessionCategoryPlayback error:nil];
 }
 
 - (void) parseOptions:(NSDictionary*) options
